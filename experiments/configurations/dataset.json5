@@ -1,0 +1,116 @@
+/*
+Dataset config_list
+
+Each dataset requires specific options to be set for the experiment. In this file we simply define all of these options
+so they can be loaded on experiment building.
+*/
+
+{
+
+    // PhysioNet problems
+    "Mortality": {
+        "data_loc": "MIMIC-IV/Mortality",
+        "problem": "oneshot",
+        "use_static": true,
+        "loss_str": "bce",
+        "metrics": ["loss", "auc", "auprc"],
+        "evaluation_metric": "auc",
+        "minimize": false
+    },
+	"LOS": {
+        "data_loc": "MIMIC-IV/LOS",
+        "problem": "oneshot",
+        "use_static": true,
+        "loss_str": "rmse",
+        "metrics": ["loss"],
+        "evaluation_metric": "loss",
+        "minimize": true
+    },
+    "Ventilation": {
+        "data_loc": "MIMIC-IV/Ventilation",
+        "problem": "online",
+        "use_static": true,
+        "loss_str": "bce",
+        "metrics": ["loss", "auc", "auprc"],
+        "evaluation_metric": "auc",
+        "minimize": false
+    },
+    "Sepsis": {
+        "data_loc": "MIMIC-IV/Sepsis",
+        "problem": "online",
+        "use_static": true,
+        "loss_str": "bce",
+        "metrics": ["loss", "auc", "auprc"],
+        "evaluation_metric": "auc",
+        "minimize": false,
+    },
+
+    // Speech Commands
+    "SpeechCommands": {
+	    "data_loc": "SpeechCommands/SpeechCommands",
+        "problem": "oneshot",
+        "use_static": false,
+        "loss_str": "ce",
+        "metrics": ["loss", "acc"],
+        "evaluation_metric": "acc",
+        "minimize": false
+    },
+
+    "CharacterTrajectories": {
+        "data_loc": "UEA/CharacterTrajectories",
+        "problem": "oneshot",
+        "use_static": false,
+        "loss_str": "ce",
+        "metrics": ["loss", "acc"],
+        "evaluation_metric": "acc",
+        "minimize": false
+    },
+
+    // TSR datasets
+    "BeijingPM2pt5": {
+        "data_loc": "TSR/BeijingPM25Quality",
+        "problem": "oneshot",
+        "use_static": false,
+        "loss_str": "rmse",
+        "metrics": ["loss"],
+        "evaluation_metric": "loss",
+        "minimize": true
+    },
+    "BeijingPM10": {
+        "data_loc": "TSR/BeijingPM10Quality",
+        "problem": "oneshot",
+        "use_static": false,
+        "loss_str": "rmse",
+        "metrics": ["loss"],
+        "evaluation_metric": "loss",
+        "minimize": true,
+    },
+    "BenzeneConcentration": {
+        "data_loc": "TSR/BenzeneConcentration",
+        "problem": "oneshot",
+        "use_static": false,
+        "loss_str": "rmse",
+        "metrics": ["loss"],
+        "evaluation_metric": "loss",
+        "minimize": true
+    },
+    "IEEEPPG": {
+        "data_loc": "TSR/IEEEPPG",
+        "problem": "oneshot",
+        "use_static": false,
+        "loss_str": "rmse",
+        "metrics": ["loss"],
+        "evaluation_metric": "loss",
+        "minimize": true
+    },
+    "PPGDalia": {
+        "data_loc": "TSR/PPGDalia",
+        "problem": "oneshot",
+        "use_static": false,
+        "loss_str": "rmse",
+        "metrics": ["loss"],
+        "evaluation_metric": "loss",
+        "minimize": true
+    }
+
+}

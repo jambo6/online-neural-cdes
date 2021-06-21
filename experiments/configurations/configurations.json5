@@ -1,0 +1,298 @@
+/*
+Main config_list
+
+These config_list are built under the assumption that
+
+Notes:
+    - These config_list are built under the
+    - dataset_name is given at the top level and never used, this is just for clarity
+    - Each run must have hyperparameters set as any of ('hyperopt', 'set', 'load') depending on whether then run
+    is the hyperopt run, the params are set in the run config, or the params are to be loaded in
+    - multi-con
+
+New notes:
+    - NCDEs have had learning rate reduced by a factor of 10 from hyperopt due to overfit
+*/
+
+{
+    // hyperopt run is handled by facebooks ax
+    "hyperopt": {
+	    "total_trials": [20],
+        "hyperparameters": ["hyperopt"],
+        "seed": [9999],
+
+        // NCDE models
+        "multi-config": {
+//	         Configuration 1 is for bejing benzene only, MIMIC is done below with a smaller grid
+	        "1": {
+                "dataset_name": [
+                    "BeijingPM2pt5", "BeijingPM10", "SpeechCommands", "CharacterTrajectories",
+                ],
+
+                "parameterization": [
+                    [
+                        {"name": "model__hidden_dim", "type": "range", "bounds": [32, 256]},
+                        {"name": "model__hidden_hidden_dim", "type": "range", "bounds": [32, 196]},
+                        {"name": "model__num_layers", "type": "range", "bounds": [1, 4]},
+                    ]
+                ],
+
+                "dataset": {
+                    "interpolation": [
+                        "linear",
+                        "rectilinear",
+                        "cubic"
+                    ]
+                },
+                "model": {
+                    "adjoint": [false],
+                    "model_string": ["ncde"],
+                    "interpolation_eps": [null],
+                    "solver": ["rk4"]
+                }
+            },
+
+//             For MIMIC reduce the hyperparameter grid for memory reasons
+            "2": {
+                "dataset_name": [
+                    "Mortality", "Sepsis", "LOS"
+                ],
+
+                "parameterization": [
+                    [
+                        {"name": "model__hidden_dim", "type": "range", "bounds": [32, 128]},
+                        {"name": "model__hidden_hidden_dim", "type": "range", "bounds": [32, 128]},
+                        {"name": "model__num_layers", "type": "range", "bounds": [1, 4]},
+                    ]
+                ],
+
+                "dataset": {
+                    "interpolation": [
+                        "linear",
+                        "rectilinear",
+                        "cubic",
+                        "rectilinear-intensity"
+                    ]
+                },
+                "model": {
+                    "adjoint": [false],
+                    "model_string": ["ncde"],
+                    "interpolation_eps": [null],
+                    "solver": ["rk4"]
+                },
+                "trainer": {
+                    "lr": [5e-4]
+                }
+            },
+
+//             GRU models
+            "3": {
+                "dataset_name": [
+                    "Mortality", "Sepsis", "LOS"
+                ],
+
+                "parameterization": [
+                    [
+                        {"name": "model__hidden_dim", "type": "range", "bounds": [32, 512]},
+                        {"name": "trainer__lr", "type": "range", "bounds": [1e-4, 1e-1], "log_scale": true}
+                    ]
+                ],
+
+                "dataset": {
+                    "interpolation": [null],
+                },
+
+                "model": {
+                    "model_string": ["gru-dt", "gru-dt-intensity", "gru-d", "gru", "gru-intensity"],
+                }
+            },
+
+//             ODERNN, requires a the NCDE grid bue needs interpolation to be null so is in its own config spec
+            "4": {
+                "dataset_name": [
+                    "Mortality", "Sepsis", "LOS"
+                ],
+
+                "parameterization": [
+                    [
+                        {"name": "model__hidden_dim", "type": "range", "bounds": [32, 256]},
+                        {"name": "model__hidden_hidden_dim", "type": "range", "bounds": [32, 196]},
+                        {"name": "model__num_layers", "type": "range", "bounds": [1, 4]},
+                        {"name": "trainer__lr", "type": "range", "bounds": [1e-4, 1e-1], "log_scale": true}
+                    ]
+                ],
+
+                "dataset": {
+                    "interpolation": [null],
+                },
+
+                "model": {
+                    "model_string": ["odernn"],
+                }
+            }
+        },
+
+    },
+
+    // NCDE rectilinear tested against SOTA medical benchmarks
+    "medical-sota": {
+        "dataset_name": [
+            "Sepsis", "Mortality", "LOS",
+        ],
+        "hyperparameters": ["load"],
+        "seed": [111, 222, 333],
+
+        "multi-config": {
+            "1": {
+                "dataset": {
+                    "interpolation": ["rectilinear", "rectilinear-intensity"],
+                },
+	            "model": {
+                    "model_string": ["ncde"],
+		            "adjoint": [false],
+                    "solver": ["rk4"],
+                },
+                "trainer": {
+                    "lr": [5e-4]
+                }
+            },
+            "2": {
+                "dataset": {
+                    "interpolation": [null],
+                },
+                "model": {
+                    "model_string": ["gru", "gru-dt", "gru-intensity", "gru-dt-intensity", "gru-d", "odernn"],
+                    "adjoint": [false],
+                    "solver": ["rk4"]
+                }
+            }
+        },
+
+    },
+
+	// interpolation for the 5 interpolation schemes, may take a long time due to dopri5
+    // Note that return_sequences will not work for dopri
+	"interpolation": {
+        "hyperparameters": ["load"],
+        "seed": [0, 111, 222],
+
+        "dataset": {
+            "interpolation": [
+                "linear",
+                "rectilinear",
+                "cubic",
+                "linear_cubic_smoothing",
+            ],
+        },
+        "model": {
+            "model_string": ["ncde"],
+            "interpolation_eps": [1],
+            "solver": ["dopri5"],
+            "adjoint": [false],
+        },
+
+        "multi-config": {
+            "1": {
+                "dataset_name": [
+                    "LOS", "Mortality",
+                ],
+                "trainer": {
+                    "lr": [5e-4],
+                }
+            },
+          // Had to reduce sepsis batch due to GPU fail
+            "2": {
+                "dataset_name": [
+                    "Sepsis"
+                ],
+                "dataset": {
+                    "batch_size": [512],
+                },
+                "trainer": {
+                    "lr": [5e-4],
+                }
+            },
+            "3": {
+                "dataset_name": [
+                    "BeijingPM10", "SpeechCommands", "CharacterTrajectories", "BeijingPM2pt5",
+                ]
+            },
+        }
+    },
+
+    // sparsity examines sparse vector fields and gating simultaneously
+    "sparsity": {
+        "hyperparameters": ["load"],
+        "seed": [0, 111, 222],
+        "dataset": {
+            "interpolation": ["linear"]
+        },
+
+        // Annoyingly need 4 configurations due to differing learning rates
+	    "multi-config": {
+            "1": {
+                "dataset_name": [
+                    "BeijingPM2pt5", "BeijingPM10", "SpeechCommands", "CharacterTrajectories"
+                ],
+	            "model": {
+                    "model_string": ["ncde"],
+                    "vector_field": ["original", "minimal", "gru"],
+                    "sparsity": [null],
+                    "vector_field_type": ["matmul", "evaluate", "derivative"],
+                    "adjoint": [false],
+                },
+            },
+            "2": {
+                "dataset_name": [
+                    "BeijingPM2pt5", "BeijingPM10", "SpeechCommands", "CharacterTrajectories"
+                ],
+	            "model": {
+                    "model_string": ["ncde"],
+                    "vector_field": [
+                        "sparse", "low-rank"
+                    ],
+                    "vector_field_type": ["matmul"],
+                    "sparsity": [
+                        0.99, 0.95, 0.90, 0.8, 0.7, 0.5
+                    ],
+                    "adjoint": [false]
+                },
+            },
+            "3": {
+                "dataset_name": [
+                    "LOS", "Mortality", "Sepsis",
+                ],
+                "model": {
+                    "model_string": ["ncde"],
+                    "vector_field": ["original", "minimal", "gru"],
+                    "sparsity": [null],
+                    "vector_field_type": ["matmul", "evaluate", "derivative"],
+                    "adjoint": [false],
+                },
+                "trainer": {
+                    "lr": [5e-4],
+                }
+            },
+            "4": {
+                "dataset_name": [
+                    "LOS", "Mortality", "Sepsis",
+                ],
+                "model": {
+                    "model_string": ["ncde"],
+                    "vector_field": [
+                        "sparse", "low-rank"
+                    ],
+                    "vector_field_type": ["matmul"],
+                    "sparsity": [
+                        0.99, 0.95, 0.90, 0.8, 0.7, 0.5
+                    ],
+                    "adjoint": [false]
+                },
+                "trainer": {
+                    "lr": [5e-4],
+                }
+            }
+        }
+    }
+
+}
