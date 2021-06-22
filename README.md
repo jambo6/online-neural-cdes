@@ -1,4 +1,4 @@
-<h1 align='center'>Neural Controlled Differential Equations for Online Prediction Tasks</h1> <br>
+<h1 align='center'>Neural Controlled Differential Equations for Online Prediction Tasks <br>
     [<a href="https://arxiv.org/pdf/2106.11028.pdf">arXiv</a>] </h1>
 
 ## Overview
