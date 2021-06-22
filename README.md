@@ -1,4 +1,5 @@
-<h1 align='center'>Neural Controlled Differential Equations for Online Prediction Tasks</h1>
+<h1 align='center'>Neural Controlled Differential Equations for Online Prediction Tasks</h1> <br>
+    [<a href="https://arxiv.org/pdf/2106.11028.pdf">arXiv</a>] </h1>
 
 ## Overview
 <p align="center">
@@ -63,3 +64,14 @@ To reproduce the tables from the paper the configurations `hyperopt`, `interpola
 The runs took us around 3 weeks in total to complete spread over multiple GPUs, so it is not recommended to try to reproduce everything. Instead, modify the configuration file and subselect only the datasets of interest.
 
 Tables can be reproduced once the runs are complete by running `experiments/analyse.py`. However, this has not been tested for only subsets of completed runs and therefore is liable to break.
+
+## Citation
+
+```bibtex
+@article{morrill2021neuralcontrolled,
+  title={Neural Controlled Differential Equations for Online Prediction Tasks},
+  author={Morrill, James and Kidger, Patrick and Yang, Lingyi and Lyons, Terry,
+  journal={arXiv preprint arXiv:2106.11028},
+  year={2021}
+}
+```
