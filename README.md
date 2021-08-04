@@ -70,7 +70,7 @@ Tables can be reproduced once the runs are complete by running `experiments/anal
 ```bibtex
 @article{morrill2021neuralcontrolled,
   title={Neural Controlled Differential Equations for Online Prediction Tasks},
-  author={Morrill, James and Kidger, Patrick and Yang, Lingyi and Lyons, Terry,
+  author={Morrill, James and Kidger, Patrick and Yang, Lingyi and Lyons, Terry},
   journal={arXiv preprint arXiv:2106.11028},
   year={2021}
 }
