@@ -1,7 +1,7 @@
 ax_platform==0.1.20
-autots @ git+git://github.com/jambo6/autots@v0.0.5
+autots @ git+git://github.com/jambo6/autots@v0.0.7
 dnspython==2.1.0
-sacredex @ git+git://github.com/jambo6/sacredex@v0.0.3
+sacredex @ git+git://github.com/jambo6/sacredex@v0.0.5
 matplotlib==3.3.4
 #mdbh @ git+https://gitlab.com/MaxSchambach/mdbh
 numpy==1.20.1
