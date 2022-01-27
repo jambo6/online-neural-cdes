@@ -33,6 +33,9 @@ pip install modules/torchdiffeq
 pip install modules/torchcde
 ```
 
+### Reproducing the Brownian motion prediction example
+Run the file sim_bm_toy_example.py. The results can then be found at `/results/sim_bm/results_table.csv`.
+
 ### Downloading the regular datasets
 Initialise empty folders in `data/raw` and `data/processed`. To download the regular datasets run the specified download script in `/get_data/download`. Note that the Beijing datasets are part of the TSR archive, and hence the file is named `tsr.py`.
 
